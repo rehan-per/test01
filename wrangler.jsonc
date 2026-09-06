@@ -1,0 +1,16 @@
+{
+  // Static-assets Worker: no server-side script needed. This deploys the
+  // "sip-the-season-kiosk" folder as-is and serves it directly — Cloudflare's
+  // supported way to host a plain static site under Workers (as opposed to
+  // Pages, which this project wasn't set up as).
+  //
+  // If a second project is added to this repo later, either give it its own
+  // Cloudflare project pointed at a different "Root directory" build setting,
+  // or switch this file to serve whichever folder that deploy should use —
+  // one wrangler config here can only point at one assets directory at a time.
+  "name": "test01",
+  "compatibility_date": "2026-09-06",
+  "assets": {
+    "directory": "./sip-the-season-kiosk"
+  }
+}

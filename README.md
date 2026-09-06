@@ -23,3 +23,15 @@ python3 -m http.server 8731 --directory <project-dir>
 ```
 
 then open <http://localhost:8731>.
+
+## Deployment
+
+This repo is connected to a Cloudflare **Worker** project named `test01` (Workers & Pages →
+Compute, not Pages). `wrangler.jsonc` at the repo root deploys it as a static-assets Worker —
+no server-side script, just the `sip-the-season-kiosk/` folder served as-is. Each folder needs
+an `index.html` for its root URL to resolve.
+
+Only one project can be wired up to `wrangler.jsonc`'s `assets.directory` at a time. Adding a
+second deployable project later means either pointing this file at it instead, or creating a
+second Cloudflare project (Worker or Pages) with its own "Root directory" build setting scoped
+to that folder.
