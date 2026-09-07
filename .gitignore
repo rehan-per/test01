@@ -16,3 +16,8 @@ build/
 .env
 .env.local
 *.local
+
+# Claude Code — keep committed skills, ignore local overrides & script caches
+.claude/settings.local.json
+__pycache__/
+*.pyc

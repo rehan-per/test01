@@ -16,6 +16,15 @@ top-level directory with its own notes.
   what's final vs. placeholder and any decisions made outside a written spec.
 - Prefer no build step where practical (single self-contained HTML files, etc.).
 
+## Claude Code skills
+
+`.claude/skills/` holds design/UI tooling that Claude Code picks up automatically when
+working anywhere in this repo:
+
+| Skill | What it does |
+|-------|--------------|
+| [`ui-ux-pro-max`](.claude/skills/ui-ux-pro-max/) | Searchable local UI/UX database (styles, palettes, font pairings, UX guidelines, per-stack rules) from [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill). Vendored copy — the search script is pure Python 3 stdlib, no install step. Update by re-copying the skill's folder from upstream. |
+
 ## Previewing a static project locally
 
 ```bash
