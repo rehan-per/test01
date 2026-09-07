@@ -32,6 +32,15 @@
   --shadow-soft:0 0.6rem 1.6rem rgba(20,4,12,0.28), 0 0.15rem 0.4rem rgba(20,4,12,0.18);
   --shadow-lift:0 1rem 2.4rem rgba(20,4,12,0.34), 0 0.25rem 0.6rem rgba(20,4,12,0.2);
 
+  /* spacing scale — design-system/sip-the-season/MASTER.md §4 (Spacious).
+     --space-sm is also the minimum gap between two touch targets. */
+  --space-xs:0.25rem;
+  --space-sm:0.5rem;
+  --space-md:1.5rem;
+  --space-lg:2rem;
+  --space-xl:3rem;
+  --space-2xl:4rem;
+
   --tap-min:3.6rem;
   --dur-fast:180ms;
   --dur-med:320ms;
@@ -128,6 +137,10 @@ html[data-contrast="high"] #app::after{ display:none; }
 .icon-btn:active{ transform:scale(0.96); }
 .icon-btn[aria-pressed="true"]{ background:var(--gold-600); color:var(--wine-900); border-color:var(--gold-600); }
 .icon-btn.back-btn{ padding:0 1.1rem 0 0.8rem; }
+/* chrome icons are inline SVG (no emoji — MASTER §9): stroke inherits
+   the button's `color`, so they track cream-on-wine, wine-on-gold when
+   pressed, and white in high-contrast mode automatically. */
+.icon-btn svg{ width:1.3rem; height:1.3rem; flex-shrink:0; }
 .topbar-controls{ display:flex; align-items:center; gap:0.5rem; flex-wrap:nowrap; }
 
 /* language switcher */
@@ -229,6 +242,9 @@ html[data-contrast="high"] #app::after{ display:none; }
 @keyframes shimmer{ 0%,60%{ transform:translateX(-120%);} 100%{ transform:translateX(120%);} }
 .attract-a11y{ position:absolute; top:0.9rem; right:0.9rem; display:flex; gap:0.5rem; z-index:5; }
 .attract-lang{ position:absolute; top:0.9rem; left:0.9rem; z-index:5; }
+/* Attract has no .topbar to inherit a light `color` from — set it here
+   so the corner chrome icons (and the "Aa" label) read on the dark ground. */
+.attract-a11y .icon-btn, .attract-lang > .lang-switch > .icon-btn{ color:var(--cream-100); }
 /* The dropdown default anchors right:0, which is correct when its
    trigger sits near the topbar's right edge — but on the Attract
    screen the trigger sits at top-LEFT instead, so a right-anchored
@@ -457,6 +473,18 @@ button:focus-visible,
 [role="button"]:focus-visible,
 input:focus-visible{ outline:3px solid var(--gold-400); outline-offset:2px; }
 .range-card:focus-visible{ outline-offset:0.15rem; }
+
+/* ===== reduced motion (MASTER §4/§8) =====
+   Drop the decorative, non-essential motion — screen fade, snowfall,
+   the Attract CTA shimmer, the search-result highlight pulse — and
+   render every screen in its final state immediately. The short
+   (<=180ms) :active press-feedback transitions are deliberately kept:
+   they're functional tap feedback, which the design system asks for. */
+@media (prefers-reduced-motion: reduce){
+  .screen{ animation:none; opacity:1; transform:none; }
+  .snowfall{ display:none; }
+  .cta-begin::after{ animation:none; opacity:0; }
+}
 
 ::-webkit-scrollbar{ width:0.5rem; }
 ::-webkit-scrollbar-thumb{ background:rgba(248,242,226,0.3); border-radius:999px; }
@@ -737,6 +765,18 @@ var ICONS = {
   cup:'<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 24h30v14a15 15 0 0 1-15 15 15 15 0 0 1-15-15z" fill="none" stroke="#f8f2e2" stroke-width="2.5"/><path d="M44 28h4a6 6 0 0 1 0 12h-4" stroke="#f8f2e2" stroke-width="2.5" fill="none"/><path d="M20 14q3 4 0 8M29 14q3 4 0 8M38 14q3 4 0 8" stroke="#e0b04a" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
   photo:'<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="14" width="48" height="36" rx="3" stroke="#f8f2e2" stroke-width="2.5"/><circle cx="22" cy="26" r="4.5" stroke="#f8f2e2" stroke-width="2.2"/><path d="M8 44l14-12 10 9 8-7 16 14" stroke="#e0b04a" stroke-width="2.2" fill="none" stroke-linejoin="round"/></svg>'
 };
+/* ---------- chrome icons (topbar / attract controls) ----------
+   Inline line icons in the same simple style as the badge art above,
+   but drawn with `currentColor` so they inherit the button's text
+   colour in every mode (default, aria-pressed, high-contrast). All
+   are decorative — every button that uses one carries an aria-label. */
+var UI_ICONS = {
+  back:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 5 8 12l6.5 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-4.7-4.7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2"/><path d="M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17M3.7 12h16.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  contrast:'<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>'
+};
 function ringClass(ring){
   if(ring==="red") return "badge-ring-red";
   if(ring==="green") return "badge-ring-green";
@@ -873,7 +913,11 @@ function selectSearchResult(item){
     go({ screen:"category", categoryId:RANGE_BY_ID[item.id].category, highlightRangeId:item.id });
     setTimeout(function(){
       var el = document.querySelector('[data-range-id="'+item.id+'"]');
-      if(el){ el.scrollIntoView({block:"center", behavior:"smooth"}); el.classList.add("highlight"); setTimeout(function(){ el.classList.remove("highlight"); },2200); }
+      if(el){
+        var smooth = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        el.scrollIntoView({block:"center", behavior: smooth ? "smooth" : "auto"});
+        el.classList.add("highlight"); setTimeout(function(){ el.classList.remove("highlight"); },2200);
+      }
     },50);
   }
 }
@@ -903,6 +947,10 @@ function render(){
   wireGlobalControls();
 }
 
+/* SVG flake (not the ❄ glyph, which renders as a colour emoji where an
+   emoji font is installed — MASTER §9). Sizes off the span's font-size
+   via 1em; colour inherits .snowflake { color: var(--cream-050) }. */
+var SNOWFLAKE_SVG = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M12 5 9.5 7.5M12 5l2.5 2.5M12 19l-2.5-2.5M12 19l2.5-2.5M4.7 8.8 5.8 12l-3.2 1M19.3 15.2 18.2 12l3.2-1M4.7 15.2 5.8 12l-3.2-1M19.3 8.8 18.2 12l3.2 1"/></svg>';
 function renderSnow(){
   var flakes = "";
   for(var i=0;i<22;i++){
@@ -911,7 +959,7 @@ function renderSnow(){
     var delay = (Math.random()*12).toFixed(1);
     var size = (0.5 + Math.random()*0.9).toFixed(2);
     var drift = (Math.random()*6-3).toFixed(1);
-    flakes += '<span class="snowflake" style="left:'+left+'%;font-size:'+size+'rem;--drift:'+drift+'rem;animation-duration:'+dur+'s;animation-delay:-'+delay+'s;">❄</span>';
+    flakes += '<span class="snowflake" style="left:'+left+'%;font-size:'+size+'rem;--drift:'+drift+'rem;animation-duration:'+dur+'s;animation-delay:-'+delay+'s;">'+SNOWFLAKE_SVG+'</span>';
   }
   return '<div class="snowfall" aria-hidden="true">'+flakes+'</div>';
 }
@@ -945,10 +993,10 @@ function renderTopbar(){
   }
   return ''+
   '<header class="topbar">'+
-    (history_.length ? '<button class="icon-btn back-btn" data-action="back" aria-label="'+t("back")+'">‹ '+t("back")+'</button>' : '<span style="width:0.2rem"></span>')+
+    (history_.length ? '<button class="icon-btn back-btn" data-action="back" aria-label="'+t("back")+'">'+UI_ICONS.back+'<span>'+t("back")+'</span></button>' : '<span style="width:0.2rem"></span>')+
     '<div class="spacer topbar-title">'+escapeHtml(title)+'</div>'+
     '<div class="topbar-controls">'+
-      '<button class="icon-btn" data-action="open-search" aria-label="'+t("search")+'">🔍</button>'+
+      '<button class="icon-btn" data-action="open-search" aria-label="'+t("search")+'">'+UI_ICONS.search+'</button>'+
       renderLangSwitch()+
       renderA11yButtons()+
     '</div>'+
@@ -958,7 +1006,7 @@ function renderTopbar(){
 function renderA11yButtons(){
   return ''+
     '<button class="icon-btn" data-action="cycle-textsize" aria-label="'+t("textSize")+'">Aa</button>'+
-    '<button class="icon-btn" data-action="toggle-contrast" aria-pressed="'+state.contrast+'" aria-label="'+t("contrast")+'">◐</button>';
+    '<button class="icon-btn" data-action="toggle-contrast" aria-pressed="'+state.contrast+'" aria-label="'+t("contrast")+'">'+UI_ICONS.contrast+'</button>';
 }
 
 function renderLangSwitch(){
@@ -970,7 +1018,7 @@ function renderLangSwitch(){
   }).join("");
   return ''+
   '<div class="lang-switch">'+
-    '<button class="icon-btn" data-action="toggle-lang-menu" aria-label="'+t("language")+'" aria-haspopup="true">🌐 '+current.code.toUpperCase()+'</button>'+
+    '<button class="icon-btn" data-action="toggle-lang-menu" aria-label="'+t("language")+'" aria-haspopup="true">'+UI_ICONS.globe+'<span>'+current.code.toUpperCase()+'</span></button>'+
     '<div class="lang-menu" role="menu" data-open="false">'+items+'</div>'+
   '</div>';
 }
@@ -1082,7 +1130,7 @@ function renderSearchOverlay(){
     '<div class="search-panel">'+
       '<div class="search-input-row">'+
         '<input id="search-input" type="text" inputmode="search" placeholder="'+t("searchPlaceholder")+'" autocomplete="off" />'+
-        '<button class="icon-btn" data-action="close-search" aria-label="Close">✕</button>'+
+        '<button class="icon-btn" data-action="close-search" aria-label="Close">'+UI_ICONS.close+'</button>'+
       '</div>'+
       '<div class="search-hint">'+t("searchHint")+'</div>'+
       '<div class="search-results" id="search-results"></div>'+

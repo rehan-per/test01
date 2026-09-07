@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sts-kiosk-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8731", "--directory", "sip-the-season-kiosk"],
+      "port": 8731
+    }
+  ]
+}
