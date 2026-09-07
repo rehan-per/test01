@@ -387,6 +387,10 @@ html[data-contrast="high"] #app::after{ display:none; }
   border:1px dashed rgba(58,14,38,0.3); border-radius:var(--radius-sm);
   padding:0.85rem 1rem; font-size:0.95rem; color:#6b5560; font-style:italic; background:rgba(58,14,38,0.03);
 }
+/* real ingredient copy — content-driven height, unitless line-height so it
+   survives the text-size cycle in every language (MASTER §8 text reflow) */
+.ingredients-body{ margin:0; font-size:0.95rem; line-height:1.55; color:var(--ink); }
+html[data-contrast="high"] .ingredients-body{ color:#000; }
 .allergen-note{ font-size:0.9rem; color:#6b5560; margin-top:0.4rem; }
 .staff-note{ font-size:0.92rem; color:var(--wine-700); background:rgba(203,149,26,0.15); border-radius:var(--radius-sm); padding:0.75rem 0.9rem; margin-top:1.2rem; }
 
@@ -553,6 +557,47 @@ var BLENDS = {
   "winter-apple":                   { name:{ en:"Winter Apple", ja:"ウィンター アップル", de:"Winterapfel", es:"Manzana de Invierno", fr:"Pomme d’Hiver" }, brew:"3–5", licorice:false }
 };
 
+/* ---------- ingredient declarations (per blend) ----------
+   Source: three "ETS Sip the Season - Ingredients" spreadsheets from Ray
+   (2026-09-08) — English plus Japanese / Spanish / Italian translations.
+   See design-system/sip-the-season/pages/blend.md for provenance and the
+   decisions baked in here. Key points:
+   - The source lists ingredients per PACK. Where the same blend is
+     reformulated slightly across pack formats (a percentage point or a
+     swapped 1% flavour), the recipe shown here is the one that appears in
+     the MOST packs; other variants are noted in blend.md.
+   - `ja` follows JP food-labelling style: ingredient names only (no
+     percentages), ending "／ 香料" (/ flavouring) where flavours are used.
+   - es / it are Ray's first-pass translations — not yet native-speaker
+     reviewed (same status as the product-name translations, PRD §7).
+   - de / fr ingredient text not supplied yet — falls back to `en` via
+     ingredientList(). Italian UI is not live yet (LANGS `it` is ready:false),
+     so `it` here is staged for when it is switched on. */
+var INGREDIENTS = {
+  "ceylon-cinnamon": {"en": "Organic cinnamon (92%), organic ginger (6%), organic cardamom (2%).", "ja": "有機シナモン、有機生姜、有機カルダモン", "es": "Canela ecológica (92 %), jengibre ecológico (6 %), cardamomo ecológico (2 %).", "it": "Cannella biologica (92%), zenzero biologico (6%), cardamomo biologico (2%)."},
+  "chai-black-tea": {"en": "Organic black tea (33%), organic ginger (19%), organic cinnamon (13%), organic turmeric (8%), organic cardamom (2%), organic cloves (8%), organic nutmeg (8%), organic black pepper (6%), organic mace (3%).", "ja": "有機紅茶、有機生姜、有機シナモン、有機ターメリック、有機クローブ、有機ナツメグ、有機ブラックペッパー、有機メース、有機カルダモン", "es": "Té negro ecológico (33 %), jengibre ecológico (19 %), canela ecológica (13 %), cúrcuma ecológica (8 %), cardamomo ecológico (2 %), clavo ecológico (8 %), nuez moscada ecológica (8 %), pimienta negra ecológica (6 %), macis ecológico (3 %).", "it": "Tè nero biologico (33%), zenzero biologico (19%), cannella biologica (13%), curcuma biologica (8%), cardamomo biologico (2%), chiodi di garofano biologici (8%), noce moscata biologica (8%), pepe nero biologico (6%), macis biologico (3%)."},
+  "crimson-fruity-punch": {"en": "Organic rosehip (34%), organic hibiscus (22%), organic cinnamon (19%), organic apple (11%), organic peppermint leaves (5%), organic licorice (4%), natural mango flavour (1.5%), natural cinnamon flavour (1.5%), organic vanilla flavour (1%), organic rose petals (1%).", "ja": "有機ローズヒップ、有機ハイビスカス、有機シナモン、有機りんご、有機ペパーミント葉、有機リコリス、有機バラの花びら／ 香料", "es": "Rosa mosqueta ecológica (34 %), hibisco ecológico (22 %), canela ecológica (19 %), manzana ecológica (11 %), hojas de menta ecológicas (5 %), regaliz ecológico (4 %), aroma natural de mango (1,5 %), aroma natural de canela (1,5 %), aroma de vainilla ecológica (1 %), pétalos de rosa ecológicos (1 %).", "it": "Rosa canina biologica (34%), ibisco biologico (22%), cannella biologica (19%), mela biologica (11%), foglie di menta piperita biologica (5%), liquirizia biologica (4%), aroma naturale di mango (1,5%), aroma naturale di cannella (1,5%), aroma di vaniglia biologica (1%), petali di rosa biologici (1%)."},
+  "festive-citrus-zest": {"en": "Organic lemongrass (38%), organic cinnamon (26%), organic ginger (12%), organic hibiscus (10%), organic orange fruit (7%), organic lemon peel (3%), natural lemon flavour (3%), natural ginger flavour (1%).", "ja": "有機レモングラス、有機シナモン、有機生姜、有機ハイビスカス、有機オレンジ果実、有機レモンピール／ 香料", "es": "Citronela ecológica (38 %), canela ecológica (26 %), jengibre ecológico (12 %), hibisco ecológico (10 %), naranja ecológica (7 %), piel de limón ecológica (3 %), aroma natural de limón (3 %), aroma natural de jengibre (1 %).", "it": "Erba-limone biologica (38%), cannella biologica (26%), zenzero biologico (12%), ibisco biologico (10%), arancia biologica (7%), scorza di limone biologica (3%), aroma naturale di limone (3%), aroma naturale di zenzero (1%)."},
+  "frostys-fruity-carnival": {"en": "Organic hibiscus (55%), organic rosehip (20%), organic lemon peel (5%), organic lemongrass (5%), organic cinnamon (5%), organic apple (5%), natural peach flavour (4%), natural passion fruit flavour (1%).", "ja": "有機ハイビスカス、有機ローズヒップ、有機レモンピール、有機レモングラス、有機シナモン、有機りんご／ 香料", "es": "Hibisco ecológico (55 %), escaramujo ecológico (20 %), cáscara de limón ecológica (5 %), citronela ecológica (5 %), canela ecológica (5 %), manzana ecológica (5 %), aroma natural de melocotón (4 %), aroma natural de maracuyá (1 %).", "it": "Ibisco biologico (55%), rosa canina biologica (20%), scorza di limone biologica (5%), erba-limone biologica (5%), cannella biologica (5%), mela biologica (5%), aroma naturale di pesca (4%), aroma naturale di frutto della passione (1%)."},
+  "gingerbread-man": {"en": "Organic black tea (53%), organic cinnamon (31%), organic apple (6%), organic ginger (5%), natural ginger flavour (1.5%), natural cinnamon flavour (1.5%), organic cardamom (1%), organic vanilla flavour (0.5%), natural lemon flavour (0.5%).", "ja": "有機紅茶、有機シナモン、有機りんご、有機生姜、有機カルダモン／ 香料", "es": "Té negro ecológico (53 %), canela ecológica (31 %), manzana ecológica (6 %), jengibre ecológico (5 %), aroma natural de jengibre (1,5 %), aroma natural de canela (1,5 %), cardamomo ecológico (1 %), aroma de vainilla ecológica (0,5 %), aroma natural de limón (0,5 %).", "it": "Tè nero biologico (53%), cannella biologica (31%), mela biologica (6%), zenzero biologico (5%), aroma naturale di zenzero (1,5%), aroma naturale di cannella (1,5%), cardamomo biologico (1%), aroma di vaniglia biologica (0,5%), aroma naturale di limone (0,5%)."},
+  "holiday-pumpkin-spice": {"en": "Organic cinnamon (61.25%), organic ginger (13%), organic roasted chicory (12%), organic anise seeds (8%), natural vanilla flavour (4%), natural cinnamon flavour (1%), organic pumpkin (0.5%), organic vanilla (0.25%).", "ja": "有機シナモン、有機生姜、有機焙煎チコリー、有機アニスシード、有機かぼちゃ、有機バニラ／ 香料", "es": "Canela ecológica (61,25 %), jengibre ecológico (13 %), achicoria tostada ecológica (12 %), semillas de anís ecológicas (8 %), aroma natural de vainilla (4 %), aroma natural de canela (1 %), calabaza ecológica (0,5 %), vainilla ecológica (0,25 %).", "it": "Cannella biologica (61,25%), zenzero biologico (13%), cicoria tostata biologica (12%), semi di anice biologici (8%), aroma naturale di vaniglia (4%), aroma naturale di cannella (1%), zucca biologica (0,5%), vaniglia biologica (0,25%)."},
+  "jolly-tropic-twist": {"en": "Organic lemongrass (34%), organic hibiscus (20%), organic peppermint leaves (20%), organic rosehip (11%), organic apple (10%), natural mango flavour (2.5%), natural peach flavour (1.5%), natural pineapple flavour (1%).", "ja": "有機レモングラス、有機ハイビスカス、有機ペパーミント葉、有機ローズヒップ、有機りんご／ 香料", "es": "Citronela ecológica (34 %), hibisco ecológico (20 %), hojas de menta ecológica (20 %), escaramujo ecológico (11 %), manzana ecológica (10 %), aroma natural de mango (2,5 %), aroma natural de melocotón (1,5 %), aroma natural de piña (1 %).", "it": "Erba-limone biologica (34%), ibisco biologico (20%), foglie di menta piperita biologica (20%), rosa canina biologica (11%), mela biologica (10%), aroma naturale di mango (2,5%), aroma naturale di pesca (1,5%), aroma naturale di ananas (1%)."},
+  "mrs-claus-berry-hug": {"en": "Organic rooibos (73%), organic cinnamon pieces (11%), organic apple pieces (8%), natural cocoa flavour (2.5%), natural strawberry flavour (1.25%), natural raspberry flavour (1.25%), organic raspberry (1%), organic blueberry (1%), organic cranberry (1%).", "ja": "有機ルイボス、有機シナモン、有機りんご、有機ラズベリー、有機ブルーベリー、有機クランベリー／ 香料", "es": "Rooibos ecológico (73 %), trozos de canela ecológica (11 %), trozos de manzana ecológica (8 %), aroma natural de cacao (2,5 %), aroma natural de fresa (1,25 %), aroma natural de frambuesa (1,25 %), frambuesa ecológica (1 %), arándano ecológico (1 %), arándano rojo ecológico (1 %).", "it": "Rooibos biologico (73%), pezzi di cannella biologica (11%), pezzi di mela biologica (8%), aroma naturale di cacao (2,5%), aroma naturale di fragola (1,25%), aroma naturale di lampone (1,25%), lampone biologico (1%), mirtillo biologico (1%), mirtillo rosso biologico (1%)."},
+  "mrs-claus-spiced-cocoa": {"en": "Organic rooibos (72%), organic cocoa (15%), organic ginger pieces (5%), organic vanilla flavour (4%), organic mace (2%), organic star anise (2%).", "ja": "有機ルイボス、有機ココア、有機ジンジャー、有機メース、有機スターアニス／ 香料", "es": "Rooibos ecológico (72 %), cacao ecológico (15 %), trozos de jengibre ecológico (5 %), aroma de vainilla ecológico (4 %), macis ecológico (2 %), anís estrellado ecológico (2 %).", "it": "Rooibos biologico (72%), cacao biologico (15%), pezzi di zenzero biologico (5%), aroma di vaniglia biologica (4%), macis biologico (2%), anice stellato biologico (2%)."},
+  "nutcrackers-velvety-spice": {"en": "Organic black tea (81%), organic cinnamon (8%), organic rooibos (5%), organic vanilla flavour (3%), natural coconut flavour (2.5%), organic ginger (0.5%).", "ja": "有機紅茶、有機シナモン、有機ルイボス、有機生姜／ 香料", "es": "Té negro ecológico (81 %), canela ecológica (8 %), rooibos ecológico (5 %), aroma de vainilla ecológico (3 %), aroma natural de coco (2,5 %), jengibre ecológico (0,5 %).", "it": "Tè nero biologico (81%), cannella biologica (8%), rooibos biologico (5%), aroma di vaniglia biologica (3%), aroma naturale di cocco (2,5%), zenzero biologico (0,5%)."},
+  "panettone-moments": {"en": "Organic rooibos (34%), organic roasted rice (20%), organic cinnamon (19.5%), organic cocoa (12%), organic orange fruit (5%), organic vanilla flavour (4%), natural coconut flavour (2.25%), natural orange flavour (1.75%), organic cardamom (1.5%).", "ja": "有機ルイボス、有機玄米、有機シナモン、有機ココア、有機オレンジ果実、有機カルダモン／ 香料", "es": "Rooibos ecológico (34 %), arroz tostado ecológico (20 %), canela ecológica (19,5 %), cacao ecológico (12 %), naranja ecológica (5 %), aroma de vainilla ecológica (4 %), aroma natural de coco (2,25 %), aroma natural de naranja (1,75 %), cardamomo ecológico (1,5 %).", "it": "Rooibos biologico (34%), riso tostato biologico (20%), cannella biologica (19,5%), cacao biologico (12%), arancia biologica (5%), aroma di vaniglia biologica (4%), aroma naturale di cocco (2,25%), aroma naturale di arancia (1,75%), cardamomo biologico (1,5%)."},
+  "reindeers-candy-cane": {"en": "Organic green tea (32.5%), organic peppermint leaves (32%), organic cinnamon (14%), organic orange peel (11%), organic roasted chicory (5%), organic peppermint flavour (1.5%), organic vanilla flavour (2%), natural coconut flavour (1.5%), organic vanilla pods (0.5%).", "ja": "有機緑茶、有機ペパーミント葉、有機シナモン、有機オレンジピール、有機焙煎チコリー、有機バニラビーンズ／ 香料", "es": "Té verde ecológico (32,5 %), hojas de menta ecológica (32 %), canela ecológica (14 %), piel de naranja ecológica (11 %), achicoria tostada ecológica (5 %), aroma de menta ecológica (1,5 %), aroma de vainilla ecológica (2 %), aroma natural de coco (1,5 %), vainas de vainilla ecológicas (0,5 %).", "it": "Tè verde biologico (32,5%), foglie di menta piperita biologiche (32%), cannella biologica (14%), scorza d'arancia biologica (11%), cicoria tostata biologica (5%), aroma di menta piperita biologica (1,5%), aroma di vaniglia biologica (2%), aroma naturale di cocco (1,5%), bacche di vaniglia biologiche (0,5%)."},
+  "reindeers-frosted-mint": {"en": "Organic green tea (74.5%), organic cinnamon pieces (14%), organic ginger (5%), organic peppermint leaves (4%), natural peppermint flavour (2%), organic rose petals (0.5%).", "ja": "有機緑茶、有機シナモン、有機生姜、有機ペパーミント葉、有機バラの花びら／ 香料", "es": "Té verde ecológico (74,5 %), trozos de canela ecológica (14 %), jengibre ecológico (5 %), hojas de menta ecológica (4 %), aroma natural de menta (2 %), pétalos de rosa ecológicos (0,5 %).", "it": "Tè verde biologico (74,5%), pezzi di cannella biologica (14%), zenzero biologico (5%), foglie di menta piperita biologica (4%), aroma naturale di menta piperita (2%), petali di rosa biologici (0,5%)."},
+  "santas-cinnamon-sleigh": {"en": "Organic black tea (67.5%), organic cinnamon (22.5%), natural raspberry flavour (3%), organic cloves (3%), organic cinnamon flavour (1.5%), organic vanilla flavour (1%), organic cranberry (1%), organic ginger (0.5%).", "ja": "有機紅茶、有機シナモン、有機クローブ、有機クランベリー、有機生姜／ 香料", "es": "Té negro ecológico (67,5 %), canela ecológica (22,5 %), aroma natural de frambuesa (3 %), clavo ecológico (3 %), aroma de canela ecológico (1,5 %), aroma de vainilla ecológico (1 %), arándano rojo ecológico (1 %), jengibre ecológico (0,5 %).", "it": "Tè nero biologico (67,5%), cannella biologica (22,5%), aroma naturale di lampone (3%), chiodi di garofano biologici (3%), aroma di cannella biologica (1,5%), aroma di vaniglia biologica (1%), mirtillo rosso biologico (1%), zenzero biologico (0,5%)."},
+  "santas-cocoa-hug": {"en": "Organic black tea (62%), organic cocoa (14%), organic cinnamon (12%), organic cloves (4%), organic licorice (4%), natural coconut flavour (3%), natural ginger flavour (1%).", "ja": "有機紅茶、有機ココア、有機シナモン、有機クローブ、有機リコリス／ 香料", "es": "Té negro ecológico (62 %), cacao ecológico (14 %), canela ecológica (12 %), clavo ecológico (4 %), regaliz ecológico (4 %), aroma natural de coco (3 %), aroma natural de jengibre (1 %).", "it": "Tè nero biologico (62%), cacao biologico (14%), cannella biologica (12%), chiodi di garofano biologici (4%), liquirizia biologica (4%), aroma naturale di cocco (3%), aroma naturale di zenzero (1%)."},
+  "santas-mint-reserve": {"en": "Organic cinnamon (52.5%), organic chicory (18%), organic licorice (10%), organic peppermint (10%), natural peppermint flavour (2.5%), organic orange peel (5%), organic ginger (1%), organic mace (1%).", "ja": "有機シナモン、有機チコリー、有機リコリス、有機ペパーミント、有機オレンジピール、有機生姜、有機メース／ 香料", "es": "Canela ecológica (52,5 %), achicoria ecológica (18 %), regaliz ecológico (10 %), menta ecológica (10 %), aroma natural de menta (2,5 %), piel de naranja ecológica (5 %), jengibre ecológico (1 %), macis ecológico (1 %).", "it": "Cannella biologica (52,5%), cicoria biologica (18%), liquirizia biologica (10%), menta piperita biologica (10%), aroma naturale di menta piperita (2,5%), scorza d'arancia biologica (5%), zenzero biologico (1%), macis biologico (1%)."},
+  "turmeric-ginger-lemongrass": {"en": "Organic ginger (30%), organic turmeric (30%), organic lemongrass (14%), organic licorice (7%), organic cloves (7%), organic lemon peels (4%), organic cardamom (1%), organic black pepper (5%), organic cumin seeds (2%).", "ja": "有機生姜、有機ターメリック、有機レモングラス、有機リコリス、有機クローブ、有機ブラックペッパー、有機レモンピール、有機クミンシード、有機カルダモン", "es": "Jengibre ecológico (30 %), cúrcuma ecológica (30 %), citronela ecológica (14 %), regaliz ecológico (7 %), clavo ecológico (7 %), piel de limón ecológica (4 %), cardamomo ecológico (1 %), pimienta negra ecológica (5 %), semillas de comino ecológicas (2 %).", "it": "Zenzero biologico (30%), curcuma biologica (30%), erba-limone biologica (14%), liquirizia biologica (7%), chiodi di garofano biologici (7%), scorze di limone biologiche (4%), cardamomo biologico (1%), pepe nero biologico (5%), semi di cumino biologici (2%)."},
+  "vanilla-apple-crumble": {"en": "Organic black tea (52.5%), organic cinnamon (26%), organic apple (5%), organic licorice (5%), organic orange peel (3%), organic rosehip (3%), natural pineapple flavour (2.5%), organic vanilla flavour (1.5%), natural cinnamon flavour (1%), vanilla pods (0.5%).", "ja": "有機紅茶、有機シナモン、有機りんご、有機リコリス、有機オレンジピール、有機ローズヒップ、有機バニラビーンズ／ 香料", "es": "Té negro ecológico (52,5 %), canela ecológica (26 %), manzana ecológica (5 %), regaliz ecológico (5 %), piel de naranja ecológica (3 %), escaramujo ecológico (3 %), aroma natural de piña (2,5 %), aroma de vainilla ecológico (1,5 %), aroma natural de canela (1 %), vainas de vainilla (0,5 %).", "it": "Tè nero biologico (52,5%), cannella biologica (26%), mela biologica (5%), liquirizia biologica (5%), scorza d'arancia biologica (3%), rosa canina biologica (3%), aroma naturale di ananas (2,5%), aroma di vaniglia biologica (1,5%), aroma naturale di cannella (1%), bacche di vaniglia (0,5%)."},
+  "white-tea-blueberry-elderflower": {"en": "Organic white tea (66%), organic lemongrass (18%), organic elderflower (10%), organic blueberry flavour (5%), organic blueberries (1%).", "ja": "有機白茶、有機レモングラス、有機エルダーフラワー、有機ブルーベリー／ 香料", "es": "Té blanco ecológico (66 %), citronela ecológica (18 %), flor de saúco ecológica (10 %), aroma de arándanos ecológico (5 %), arándanos ecológicos (1 %).", "it": "Tè bianco biologico (66%), erba-limone biologica (18%), fiori di sambuco biologici (10%), aroma di mirtillo biologico (5%), mirtilli biologici (1%)."},
+  "winter-anise-brew": {"en": "Organic black tea (84.5%), organic cloves (10.5%), natural peppermint flavour (2%), natural anise flavour (1.5%), organic star anise (1%), organic ginger (0.5%).", "ja": "有機紅茶、有機クローブ、有機スターアニス、有機生姜／ 香料", "es": "Té negro ecológico (84,5 %), clavo ecológico (10,5 %), aroma natural de menta (2 %), aroma natural de anís (1,5 %), anís estrellado ecológico (1 %), jengibre ecológico (0,5 %).", "it": "Tè nero biologico (84,5%), chiodi di garofano biologici (10,5%), aroma naturale di menta piperita (2%), aroma naturale di anice (1,5%), anice stellato biologico (1%), zenzero biologico (0,5%)."},
+  "winter-apple": {"en": "Organic cinnamon (48%), organic rosehip (21%), organic hibiscus (8%), organic apple (8%), organic orange fruit (6%), organic clove (4%), natural apple flavour (4%), natural cinnamon flavour (1%).", "ja": "有機シナモン、有機ローズヒップ、有機りんご、有機ハイビスカス、有機オレンジ果実、有機クローブ／ 香料", "es": "Canela ecológica (48 %), escaramujo ecológico (21 %), hibisco ecológico (8 %), manzana ecológica (8 %), naranja ecológica (6 %), clavo ecológico (4 %), aroma natural de manzana (4 %), aroma natural de canela (1 %).", "it": "Cannella biologica (48%), rosa canina biologica (21%), ibisco biologico (8%), mela biologica (8%), arancia biologica (6%), chiodi di garofano biologici (4%), aroma naturale di mela (4%), aroma di cannella biologica (1%)."}
+};
+
 var RANGES = [
   { id:"santas-stockings", category:"decos", icon:"decos",
     name:{ en:"Santa’s Stockings", ja:"サンタのストッキング", de:"Santas Strümpfe", es:"Calcetines de Santa", fr:"Chaussettes du Père Noël" },
@@ -614,11 +659,16 @@ RANGES.forEach(function(r){ RANGE_BY_ID[r.id] = r; });
    to English so nothing ever renders a raw key or blank string —
    useful if a string is ever added to en and missed elsewhere. */
 var LANGS = [
-  { code:"en", label:"English", ready:true },
-  { code:"ja", label:"日本語",   ready:true },
-  { code:"de", label:"Deutsch", ready:true },
-  { code:"es", label:"Español", ready:true },
-  { code:"fr", label:"Français", ready:true }
+  { code:"en", label:"English",  ready:true },
+  { code:"ja", label:"日本語",     ready:true },
+  { code:"de", label:"Deutsch",  ready:true },
+  { code:"es", label:"Español",  ready:true },
+  { code:"fr", label:"Français", ready:true },
+  /* Italian: ingredient text is already staged in INGREDIENTS.it, but the
+     name/blurb/UI-chrome tables have no `it` yet — mark not-ready so it
+     shows as "coming soon" in the switcher and can't be selected until the
+     rest of the `it` strings land. Flip to ready:true then. */
+  { code:"it", label:"Italiano", ready:false }
 ];
 var UI = {
   en:{
@@ -745,6 +795,14 @@ function rangeName(r){ return localized(r.name); }
 function rangeFormat(r){ return localized(r.format); }
 function brewLabel(b){ return b.brew + t("minSuffix"); }
 function allergenLabel(b){ return b.licorice ? t("allergenLicorice") : null; }
+/* Ingredient text for a blend in the active language, English fallback
+   (covers de/fr, which have no ingredient translation yet). null when the
+   blend has no declared ingredients so the caller can show "coming soon". */
+function ingredientList(bid){
+  var o = INGREDIENTS[bid];
+  if(!o) return null;
+  return o[state.lang] || o.en || null;
+}
 
 /* Santa's Stockings colourway names — the only other user-visible
    strings that needed a translation table of their own. */
@@ -1105,6 +1163,10 @@ function renderBlendScreen(){
 
 function renderBlendDetail(bid){
   var b = BLENDS[bid];
+  var ing = ingredientList(bid);
+  var ingBlock = ing
+    ? '<p class="ingredients-body">'+escapeHtml(ing)+'</p>'
+    : '<div class="pending">'+t("pendingIngredients")+'</div>';
   return ''+
   '<div class="screen-scroll">'+
     '<div class="detail-card">'+
@@ -1116,7 +1178,7 @@ function renderBlendDetail(bid){
         '<div class="detail-row"><dt>'+t("price")+'</dt><dd>'+t("pendingPrice")+'</dd></div>'+
       '</dl>'+
       '<div class="detail-block"><h3>'+t("tastingNotes")+'</h3><div class="pending">'+t("pendingCopy")+'</div></div>'+
-      '<div class="detail-block"><h3>'+t("ingredients")+'</h3><div class="pending">'+t("pendingIngredients")+'</div></div>'+
+      '<div class="detail-block"><h3>'+t("ingredients")+'</h3>'+ingBlock+'</div>'+
       '<div class="detail-block"><h3>'+t("cupColour")+'</h3><div class="pending">'+ICONS.cup.replace(/#f8f2e2/g,"#6b5560")+t("pendingCup")+'</div></div>'+
       '<div class="allergen-note staff-note">'+t("askStaff")+'</div>'+
     '</div>'+

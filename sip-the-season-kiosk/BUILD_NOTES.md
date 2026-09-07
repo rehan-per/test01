@@ -29,11 +29,20 @@ Attract is plain styled text, not the locked vector logo. Typography uses system
 (serif/sans) standing in for Fraunces/Inter — PRD §4.3 explicitly says don't guess a third
 typeface without Ray's input, so this is a neutral placeholder, not a proposal.
 
-**Left as empty/pending fields, never fabricated:** tasting notes, full ingredient lists, price,
-product photography, cup-colour photography, organic/vegan certification badge. All render a
-"coming soon" state. Do not fill these with invented copy even if asked to "just add something"
-— PRD §6 and §11 are explicit that pricing and certification claims need Ray's sign-off, and the
-ingredient/tasting-note copy doesn't exist yet anywhere.
+**Ingredients — supplied by Ray 2026-09-08, now live.** Full ingredient lists for all 22
+blends in `en` / `es` / `it` / `ja`, from three `ETS Sip the Season - Ingredients` spreadsheets.
+Stored in `INGREDIENTS` (blend-keyed, sibling of `BLENDS`); the Blend-detail Ingredients block
+shows real text when present, `.pending` otherwise. Full provenance + the judgment calls
+(one canonical recipe per blend where packs differ slightly; first-pass es/it translations;
+JP labelling style) are in `design-system/sip-the-season/pages/blend.md`. `de` / `fr` have no
+ingredient text yet → English fallback. Italian is staged in `INGREDIENTS.it` but `LANGS` `it`
+is `ready:false` (shows "coming soon") until the rest of the `it` strings land.
+
+**Still left as empty/pending, never fabricated:** tasting notes, price, product photography,
+cup-colour photography, organic/vegan certification badge. All render a "coming soon" state.
+Do not fill these with invented copy even if asked to "just add something" — PRD §6 and §11 are
+explicit that pricing and certification claims need Ray's sign-off, and the tasting-note copy
+doesn't exist yet anywhere.
 
 ## Language data — added this session, beyond the PRD
 
