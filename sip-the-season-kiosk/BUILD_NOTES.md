@@ -22,12 +22,21 @@ switcher, inactivity auto-reset to Attract, View-Transition-less CSS fade (no `s
 wired yet — see Open items), allergen flag ("Contains licorice" only, exactly where PRD §6 flags
 it), brew times.
 
-**Placeholder, by design, not a bug:** all iconography (category/range badges, cup icon, photo
-icon) is original simple SVG I drew — there is no ETS illustration-sheet PDF or STS logo file in
-this environment, so none of the real brand assets were available to extract. The wordmark on
-Attract is plain styled text, not the locked vector logo. Typography uses system-font stacks
-(serif/sans) standing in for Fraunces/Inter — PRD §4.3 explicitly says don't guess a third
-typeface without Ray's input, so this is a neutral placeholder, not a proposal.
+**Brand assets — supplied by Ray 2026-09-08, now live.** `STS Logo.pdf` and
+`ETS_illustration_Sheet.pdf` were converted to inline SVG (custom PDF→SVG pass — no renderer on
+the machine; scripts in the session scratchpad, not the repo) and recoloured toward the
+wine/gold/cream palette. Now in the build via a new `ART` object:
+- **Attract wordmark** — the real gold "SIP THE SEASON" mark replaces the CSS-styled text. The
+  tagline stays separate localized text (the artwork's baked-in English tagline was dropped so
+  ja/de/es/fr still translate).
+- **Category illustrations** — `ART.decos` (lantern), `ART.houses` (gingerbread house),
+  `ART.crackers` (nutcracker) replace the hand-drawn line icons in the tile/range badges.
+Full provenance, the colour-remap, and what was NOT used are in
+`design-system/sip-the-season/pages/brand-assets.md`.
+
+**Still placeholder:** `ICONS.cup` / `ICONS.photo` (line art — only used in the still-pending
+cup-colour / product-photo slots). Typography still uses system-font stacks standing in for
+Fraunces/Inter — PRD §4.3 says don't guess a third typeface; real font files not supplied yet.
 
 **Ingredients — supplied by Ray 2026-09-08, now live.** Full ingredient lists for all 22
 blends in `en` / `es` / `it` / `ja`, from three `ETS Sip the Season - Ingredients` spreadsheets.
@@ -93,6 +102,24 @@ Verified in the browser: no console errors; icons legible in both contrast modes
 
 `../.claude/launch.json` (config `sts-kiosk-static`) is now actually present — it was referenced
 here before but had not been committed.
+
+### Polish pass — 2026-09-08 (with the brand assets)
+
+- **Staggered card entrance** — `card-in` / `tile-in` keyframes: each tile / range card / blend
+  chip fades+rises with a small per-item delay (~40–70ms), so a list assembles rather than
+  snapping. `--ease-out` (`cubic-bezier(.16,1,.3,1)`, decelerate) drives it and the screen fade.
+  Tiles fade only (a transform keyframe would fight their `translate(-50%,-50%)` centering).
+  All of it is disabled under `prefers-reduced-motion` (tile keeps its centering transform).
+- **High-contrast fix** — `.tile-blurb`, `.blend-list-header .meta` and `.section-heading p`
+  were set to `#000` on their dark backgrounds (invisible). Split the HC muted-text rules:
+  `#000` on white cards, `#fff` on the dark ground / black tile. The SVG wordmark gets
+  `fill:#ffd257` in HC (replacing the old `-webkit-text-fill-color` hack for the text version).
+- Category tile badge bumped 9.4→10.5rem; `.badge svg` now contains-fit (illustrations have
+  varied aspect ratios) instead of a forced square.
+
+File is ~216 KB (was ~85 KB) — the brand illustration SVGs account for ~130 KB. Acceptable for a
+self-contained offline kiosk that loads once; the gingerbread house is the heaviest (~86 KB /
+~480 path elements). If size becomes an issue, that one is the candidate to simplify or swap.
 
 ## Layout — also revised this session
 
