@@ -60,4 +60,14 @@
 
 Product photography, cup-colour photography, tasting notes, price, organic/vegan certification
 badge — all still render the `.pending` "coming soon" state. `de` / `fr` ingredient text not
-supplied (English fallback). Italian UI not live (`LANGS` `it` is `ready:false`).
+supplied (English fallback). **Italian went live 2026-09-09** (`LANGS` `it` `ready:true`) — the
+`it` ingredient text here is now shown to Italian users; still first-pass, still needs proofing.
+
+### 2026-09-09 overhaul — this screen
+
+The `.detail-media` "photography coming soon" box is no longer a dashed placeholder — it's a
+gilt-framed wine-gradient plate. `.pending` is now a warm gilt box (still boxed, so the
+"boxed = still coming / plain text = real" rule above still reads). `<dl>` rows use gilt
+hairlines and tracked small-caps `dt`; block headers (`h3`) get a short leading rule. Title is
+serif with a short foil rule under it. `.ingredients-body` is unchanged in structure
+(content-driven height, unitless `line-height`), just larger/looser type.

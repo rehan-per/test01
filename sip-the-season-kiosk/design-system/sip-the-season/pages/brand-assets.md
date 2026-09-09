@@ -4,6 +4,17 @@
 > decisions baked in. Overrides `../MASTER.md` §3 (typography) and §6 (style)
 > only where noted.
 
+> **⚠️ SUPERSEDED 2026-09-09.** The PDF-content-stream trace described below
+> rendered as broken, lumpy letterforms (wordmark) and heavy sub-path sludge
+> (illustrations) at kiosk size — Ray: "the graphics like the logo look
+> terrible". It was **removed**. The wordmark is now real type set as a gilded
+> SIP / THE / SEASON lockup (`renderWordmark()` + `WM_SPRIG`); the three category
+> illustrations are **bespoke SVGs** hand-drawn to one system (see BUILD_NOTES
+> "Premium visual overhaul" and MASTER §9). The rest of this file is kept as the
+> record of what the PDFs contained and what was tried — the original AI/PDF
+> files are still the source if ETS ever provides clean SVG/PNG exports to drop
+> in. The colour-remap notes still apply if those raw exports are used.
+
 ## Source
 
 Two Adobe Illustrator PDF exports from Ray, 2026-09-08:

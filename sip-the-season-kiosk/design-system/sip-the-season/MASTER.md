@@ -26,8 +26,8 @@
 - **Self-contained `.html`** — no build step, no network calls. Everything (data, CSS, fonts-as-stacks, icons-as-inline-SVG) is inline. **No CDN `@import`, no web-font fetch, no GSAP/ScrollTrigger.**
 - **Information architecture:** `Attract → Category → Range → Blend`. A browse tree, not a landing page. There is **no "CTA"**, no conversion funnel, no scroll narrative.
 - **Shared device, many short sessions.** Language / text-size / contrast are session-scoped and reset on the inactivity timeout (`INACTIVITY_TIMEOUT_MS`, provisional 90 s) and on explicit Home — never persisted.
-- **Five languages** switchable live (en / ja / de / es / fr); every visible string is a `{en,ja,de,es,fr}` object. Layout must survive the longest translation at the largest text size.
-- **Brand:** ETS "Sip The Season" — seasonal / winter, premium, warm, gift-shop context. Real ETS illustration + logo assets are **not yet in the repo**; current icons/wordmark are neutral placeholders (PRD §4.3, §6).
+- **Six languages** switchable live (en / ja / de / es / fr / it); every visible string is a `{en,ja,de,es,fr,it}` object. Layout must survive the longest translation at the largest text size. (Italian went live 2026-09-09 — the Category wreath degrades to a stacked layout at `large`/`xlarge` text because the absolute-positioned tiles can't hold the longest strings without colliding.)
+- **Brand:** ETS "Sip The Season" — seasonal / winter, premium, warm, gift-shop context. As of the 2026-09-09 overhaul the wordmark is real type (gilded SIP/THE/SEASON lockup) and the category illustrations (lantern / cottage / nutcracker) are bespoke SVGs drawn to one system — **not** the earlier PDF-content-stream trace, which rendered as broken letterforms. Still no real Fraunces/Inter font files (PRD §4.3); the cup / photo `ICONS` remain neutral placeholders.
 
 ---
 
@@ -193,7 +193,9 @@ PRD §6/§11: these fields are **empty by design** — never fabricate copy. Ren
 
 ## 6. Style direction (replaces the tool's "Liquid Glass")
 
-**Warm editorial soft-UI.** Cream content cards floating on a deep wine ground; single gold metal accent; generous rounded corners; soft warm-tinted elevation; high-contrast serif display over clean sans body; restrained seasonal decoration (snow, stocking swatches). Closest catalogue references *(ui-ux-pro-max `--domain style`)*: **Soft UI Evolution** (evolved soft UI, better contrast, accessibility-focused) and **Editorial Grid / Magazine** for the Range/Blend reading layouts. **Not** glassmorphism / Liquid Glass (translucency + blur — GPU cost, contrast risk, wrong genre), **not** Swiss/enterprise minimalism, **not** bento/brutalism.
+**Warm editorial soft-UI, dialled toward "festive boutique".** Cream content cards floating on a deep wine ground; single gold metal accent; generous rounded corners; soft warm-tinted elevation; high-contrast serif display over clean sans body; restrained seasonal decoration (snow, stocking swatches). Closest catalogue references *(ui-ux-pro-max `--domain style`)*: **Soft UI Evolution** (evolved soft UI, better contrast, accessibility-focused) and **Editorial Grid / Magazine** for the Range/Blend reading layouts. **Not** glassmorphism / Liquid Glass (translucency + blur — GPU cost, contrast risk, wrong genre), **not** Swiss/enterprise minimalism, **not** bento/brutalism.
+
+**2026-09-09 overhaul — decided in chat with Ray.** The plain execution "didn't feel premium". The ornamental register was turned up (still the same palette): gilded/foil display type (`--foil` gold ramp clipped to glyphs), gilt hairline frames on cards + a filigree `.ornament-frame` on Attract, ruled/centred section headings, a gilt medallion anchoring the Category wreath, 3-band parallax snow, a foil CTA. Rule of thumb: **ornament is gilt line-work and framing, never colour** — the wine/gold/cream trio is locked, decoration is gold hairlines + foil + drawn motifs (holly, star, teacup). Every foil/gilt surface needs an explicit high-contrast solid fallback (§2).
 
 ---
 
@@ -231,7 +233,7 @@ Persistent chrome on every non-Attract screen: **Back** (`arrow-left`), **Home**
 
 ## 9. Icons
 
-Current build uses **hand-drawn inline SVG** placeholders (no ETS illustration sheet in-repo). Keep them inline (no icon-font, no network). Do **not** use emoji as UI icons. If a placeholder needs replacing before real ETS art lands, match Phosphor names for consistency *(ui-ux-pro-max `--domain icons`)*: Back `arrow-left`, Search `magnifying-glass`, Language `globe`, Reset/Home `arrow-counter-clockwise` / `house`. Meaningful standalone icons need a text label or `aria-label`; decorative ones get `aria-hidden="true"`.
+All art is **inline SVG** (no icon-font, no network). Do **not** use emoji as UI icons. The category illustrations (`ART.decos/houses/crackers` — lantern / cottage / nutcracker) and the wordmark lockup are bespoke, drawn to one system (gilt stroke, wine/green/cream fills, ~2u weight on a 100u viewBox, flat fills — no gradient `<defs>`, the strings are injected many times over). The chrome icons (`UI_ICONS`) match Phosphor names for consistency *(ui-ux-pro-max `--domain icons`)*: Back `arrow-left`, Search `magnifying-glass`, Language `globe`, Reset/Home `arrow-counter-clockwise` / `house`. `ICONS.cup` / `ICONS.photo` are still simple placeholders (Blend screen, `currentColor`-stroked). Meaningful standalone icons need a text label or `aria-label`; decorative ones get `aria-hidden="true"`.
 
 ---
 
